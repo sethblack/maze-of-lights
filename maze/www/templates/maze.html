@@ -1,9 +1,6 @@
 <ion-view class="content-dark">
-  <ion-content>
-    <div class="lights">
-
-      <div class="light" on-touch="touchLight()" style="background-color: #333;width:25px; height:25px"></div>
-
-    </div>
+  <ion-content scroll="false">
+    <div class="lights" id="lights" on-touch="touchLight()" on-release="releaseLight()" on-drag="dragLight()"></div>
+    <div class="timer">{{ timer.time }}</div>
   </ion-content>
 </ion-view>

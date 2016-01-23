@@ -22,5 +22,53 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 @import "www/lib/ionic/scss/ionic";
 
 html, body {
-    background-color: rgba(33, 33, 33, 1);
+    background-color: #333;
+    color: #fff;
+}
+
+.scroll-content {
+    background-color: #333;
+}
+
+.timer {
+    font-size: 1.6em;
+    text-align: center;
+    margin: 8px;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    text-shadow: 3px 3px #222;
+}
+
+.lights {
+    width: 100%;
+    padding-bottom: 25px;
+    margin: 30px auto;
+    background-color: rgba(255, 255, 255, 0);
+
+    .row {
+        div {
+            width: 8.33%;
+            /*height: 25px;*/
+            padding-bottom: 8.33%;
+            display: inline-block;
+            background-image: url('../img/led-red-control-hi.png');
+            background-size: 50% auto;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.25;
+        }
+
+        .light {
+            background-color: #666;
+        }
+
+        .dark {
+            background-color: #000;
+        }
+
+        .activated {
+            opacity: 1;
+        }
+    }
 }
