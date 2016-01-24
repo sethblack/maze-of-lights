@@ -6,6 +6,7 @@ angular.module('maze.controllers', [])
   $scope.currentBoxNumber = 0;
   $scope.currentMaze = null;
   $scope.gameOver = true;
+  $scope.mazeNumber = 0;
 
   $scope.$on('$ionicView.enter', function(e) {
     console.log('MazeCtrl');
@@ -68,26 +69,12 @@ angular.module('maze.controllers', [])
   }
 
   $scope.generateMaze = function() {
-    var maze = {'data': [
-      [0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ],
-      [0 ,0 ,0 ,0 ,0 ,0 ,0 ,17,18,19,20,21],
-      [0 ,0 ,0 ,0 ,0 ,0 ,0 ,16,0 ,0 ,0 ,0 ],
-      [0 ,0 ,0 ,0 ,0 ,0 ,0 ,15,0 ,0 ,0 ,0 ],
-      [0 ,0 ,0 ,0 ,0 ,0 ,0 ,14,0 ,0 ,0 ,0 ],
-      [0 ,0 ,0 ,0 ,10,11,12,13,0 ,0 ,0 ,0 ],
-      [0 ,0 ,0 ,0 ,9 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ],
-      [0 ,0 ,0 ,0 ,8 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ],
-      [0 ,0 ,0 ,0 ,7 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ],
-      [0 ,0 ,0 ,0 ,6 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ],
-      [0 ,0 ,0 ,0 ,5 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ],
-      [0 ,0 ,0 ,0 ,4 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ],
-      [0 ,0 ,0 ,0 ,3 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ],
-      [0 ,0 ,0 ,0 ,2 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ],
-      [0 ,0 ,0 ,0 ,1 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ],
-    ], 'max_no': 21, 'max_time': 2.25};
+    if ($scope.mazeNumber > window.mazes.length) {
+      $scope.mazeNumber = 0;
+    }
 
-    $scope.currentMaze = maze;
-    $scope.timer.time = maze.max_time;
+    $scope.currentMaze = window.mazes[$scope.mazeNumber];
+    $scope.timer.time = $scope.currentMaze.max_time.toFixed(2);
     $scope.gameOver = false;
     $scope.currentBoxNumber = 0;
 
@@ -104,8 +91,8 @@ angular.module('maze.controllers', [])
       for (var x = 0; x < mazeSize.width; x++) {
         var colDiv = document.createElement("div");
 
-        colDiv.className = (maze.data[y][x] == 0) ? "dark" : "light";
-        colDiv.setAttribute("boxNumber", maze.data[y][x])
+        colDiv.className = ($scope.currentMaze.data[y][x] == 0) ? "dark" : "light";
+        colDiv.setAttribute("boxNumber", $scope.currentMaze.data[y][x])
         rowDiv.appendChild(colDiv);
       }
 
@@ -147,6 +134,7 @@ angular.module('maze.controllers', [])
 
           if (boxNumber >= $scope.currentMaze.max_no) {
             $scope.stopTimer();
+            $scope.gameOver = true;
 
             var alertPopup = $ionicPopup.alert({
               title: 'Nice!',
@@ -154,6 +142,7 @@ angular.module('maze.controllers', [])
             });
 
             alertPopup.then(function(res) {
+              $scope.mazeNumber += 1;
               $scope.generateMaze();
             });
           }

@@ -9732,8 +9732,7 @@ a.button {
   transition-duration: 0s; }
 
 html, body {
-  background-color: #333;
-  color: #fff; }
+  background-color: #333; }
 
 .scroll-content {
   background-color: #333; }
@@ -9745,7 +9744,9 @@ html, body {
   position: absolute;
   top: 0px;
   left: 0px;
-  text-shadow: 3px 3px #222; }
+  width: 100%;
+  text-shadow: 3px 3px #222;
+  color: #eee; }
 
 .lights {
   width: 100%;

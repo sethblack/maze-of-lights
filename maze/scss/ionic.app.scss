@@ -23,7 +23,6 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 
 html, body {
     background-color: #333;
-    color: #fff;
 }
 
 .scroll-content {
@@ -37,7 +36,9 @@ html, body {
     position: absolute;
     top: 0px;
     left: 0px;
+    width: 100%;
     text-shadow: 3px 3px #222;
+    color: #eee;
 }
 
 .lights {
