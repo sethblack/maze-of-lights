@@ -1,11 +1,17 @@
 from copy import deepcopy
 
+import hashlib
 import json
 import random
 import sys
 
 LEVEL_WIDTH  = 12
 LEVEL_HEIGHT = 15
+
+def hash_id(level):
+    data = '.'.join(['.'.join(str(r)) for r in level])
+
+    return hashlib.md5(data).hexdigest()
 
 def pick_direction(da):
     weighted_choices = ['N'] * da[0] + ['E'] * da[1] + ['S'] * da[2] + ['W'] * da[3]
@@ -21,7 +27,7 @@ def pick_length(cur_row, cur_col, direction):
     if direction == 'N':
         max_length = cur_row
     elif direction == 'S':
-        max_length = LEVEL_HEIGHT - cur_row - 1
+        max_length = LEVEL_HEIGHT - cur_row - 2
     elif direction == 'E':
         max_length = LEVEL_WIDTH - cur_col - 1
     elif direction == 'W':
@@ -125,6 +131,7 @@ def gen_level(width, height):
             if level_data[cur_row][cur_col] == 0:
                 level_data[cur_row][cur_col] = cur_step
             else:
+                cur_step -= 1
                 stomps += 1
 
             if stomps >= 2:
@@ -140,7 +147,9 @@ def gen_level(width, height):
             undo_data = {}
 
             for x in xrange(0, numpops):
-                undo_data = undo.pop()
+
+                if len(undo) > 0:
+                    undo_data = undo.pop()
 
             level_data = deepcopy(undo_data['undo_level_data'])
             cur_step = undo_data['undo_cur_step']
@@ -157,7 +166,8 @@ def gen_level(width, height):
     return {
         'data': level_data,
         'max_no': cur_step,
-        'max_time': 50
+        'max_time': cur_step / 10.0,
+        'hash_id': hash_id(level_data),
     }
 
 def print_level(level):
@@ -168,13 +178,23 @@ def print_level(level):
                 sys.stdout.write(',')
 
             sys.stdout.write('{}'.format(c).rjust(3))
-        sys.stdout.write(']')
+        sys.stdout.write('],')
         sys.stdout.write('\n')
 
 if __name__ == '__main__':
-    level = gen_level(LEVEL_WIDTH, LEVEL_HEIGHT)
+    levels = []
 
-    print "Final Level: "
-    print "{'data': ["
-    print_level(level['data'])
-    print "], 'max_no': {}, 'max_time': {}}}".format(level['max_no'], level['max_time'])
+    for x in xrange(1, 299):
+        levels.append(gen_level(LEVEL_WIDTH, LEVEL_HEIGHT))
+
+    sorted_levels = sorted(levels, key=lambda level: level['max_no'])
+
+    print "window.mazes = ["
+    for x, level in enumerate(sorted_levels):
+        if x != 0:
+            print ","
+
+        print "{'data': ["
+        print_level(level['data'])
+        print "], 'max_no': {}, 'max_time': {}, 'hash_id': '{}'}}".format(level['max_no'], level['max_time'], level['hash_id'])
+    print "];"

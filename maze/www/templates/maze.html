@@ -1,6 +1,11 @@
 <ion-view class="content-dark">
-  <ion-content scroll="false">
-    <div class="lights" id="lights" on-touch="touchLight()" on-release="releaseLight()" on-drag="dragLight()"></div>
+  <ion-content scroll="false" class="box">
     <div class="timer">{{ timer.time }}s</div>
+    <div class="lights" id="lights" on-touch="touchLight()" on-release="releaseLight()" on-drag="dragLight()"></div>
+    <div class="bottom">
+        <i class="icon ion-chevron-left"></i>
+        <div>Caption Middle</div>
+        <i class="icon ion-chevron-right"></i>
+    </div>
   </ion-content>
 </ion-view>

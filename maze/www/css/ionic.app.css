@@ -9741,18 +9741,30 @@ html, body {
   font-size: 1.6em;
   text-align: center;
   margin: 8px;
-  position: absolute;
   top: 0px;
   left: 0px;
-  width: 100%;
   text-shadow: 3px 3px #222;
   color: #eee; }
 
+.box {
+  display: flex;
+  flex-flow: column;
+  height: 100%; }
+  .box .timer, .box .lights {
+    flex: 0 1 auto; }
+  .box .bottom {
+    color: #eee;
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center; }
+
+.content-dark {
+  background-color: rgba(255, 255, 255, 0); }
+
 .lights {
   width: 100%;
-  padding-bottom: 25px;
-  margin: 30px auto;
-  background-color: rgba(255, 255, 255, 0); }
+  background-color: rgba(255, 255, 255, 0);
+  padding-bottom: 15px; }
   .lights .row div {
     width: 8.33%;
     /*height: 25px;*/
