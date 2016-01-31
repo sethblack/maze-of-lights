@@ -69,7 +69,7 @@ angular.module('maze.controllers', [])
   }
 
   $scope.generateMaze = function() {
-    if ($scope.mazeNumber > window.mazes.length) {
+    if ($scope.mazeNumber >= window.mazes.length) {
       $scope.mazeNumber = 0;
     }
 
