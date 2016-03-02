@@ -6,7 +6,9 @@ angular.module('maze.controllers', [])
   $scope.currentBoxNumber = 0;
   $scope.currentMaze = null;
   $scope.gameOver = true;
-  $scope.mazeNumber = 0;
+  $scope.mazeNumber = parseInt(window.localStorage['mazeNumber']) || 0;
+  $scope.totalMazes = window.mazes.length;
+  $scope.mazeNotAvailable = true;
 
   $scope.$on('$ionicView.enter', function(e) {
     console.log('MazeCtrl');
@@ -68,6 +70,62 @@ angular.module('maze.controllers', [])
     return coords.pageY > elementRect.top && coords.pageY < elementRect.bottom && coords.pageX > elementRect.left && coords.pageX < elementRect.right;
   }
 
+  $scope.currentBestTime = function() {
+    if(!$scope.currentMaze) {
+      return (0.00).toFixed(2);
+    }
+
+    return $scope.bestTime($scope.currentMaze.hash_id).toFixed(2);
+  }
+
+  $scope.bestTime = function(hashId) {
+    var localMazes = JSON.parse(window.localStorage['mazes']),
+        maze = localMazes[hashId];
+
+    if (!maze) {
+      return 0.0;
+    }
+
+    return parseFloat(maze.best_time);
+  } 
+
+  $scope.mazeNotAvailableFx = function() {
+    if ($scope.mazeNumber == 0) {
+      $scope.mazeNotAvailable = false;
+      return;
+    }
+
+    var previousMazeHash = window.mazes[$scope.mazeNumber - 1].hash_id;
+
+    $scope.mazeNotAvailable = $scope.bestTime(previousMazeHash) == 0.0;
+  }
+
+  $scope.previousMaze = function() {
+    if ($scope.mazeNumber <= 0) {
+      return;
+    }
+
+    $scope.mazeNumber -= 1;
+    $scope.generateMaze();
+  }
+
+  $scope.nextMaze = function() {
+    if ($scope.mazeNumber >= window.mazes.length) {
+      return;
+    }
+
+    $scope.mazeNumber += 1;
+    $scope.generateMaze();
+  }
+
+  $scope.notFirst = function() {
+    return $scope.mazeNumber > 0;
+  }
+
+  $scope.notLast = function() {
+    return $scope.mazeNumber < window.mazes.length - 1;
+  }
+
   $scope.generateMaze = function() {
     if ($scope.mazeNumber >= window.mazes.length) {
       $scope.mazeNumber = 0;
@@ -92,16 +150,27 @@ angular.module('maze.controllers', [])
         var colDiv = document.createElement("div");
 
         colDiv.className = ($scope.currentMaze.data[y][x] == 0) ? "dark" : "light";
+
+        if ($scope.currentMaze.data[y][x] == 1) {
+          colDiv.className += " green";
+        }
+
+        if ($scope.currentMaze.data[y][x] == $scope.currentMaze.max_no) {
+          colDiv.className += " red";
+        }
+
         colDiv.setAttribute("boxNumber", $scope.currentMaze.data[y][x])
         rowDiv.appendChild(colDiv);
       }
 
       mazeDiv.appendChild(rowDiv);
     }
+
+    $scope.mazeNotAvailableFx();
   }
 
   $scope.touchLight = function() {
-    if ($scope.gameOver == true) {
+    if ($scope.gameOver == true || $scope.mazeNotAvailable == true) {
       return;
     }
 
@@ -114,7 +183,7 @@ angular.module('maze.controllers', [])
   }
 
   $scope.dragLight = function() {
-    if ($scope.gameOver == true) {
+    if ($scope.gameOver == true || $scope.mazeNotAvailable == true) {
       return;
     }
 
@@ -129,7 +198,7 @@ angular.module('maze.controllers', [])
         var boxNumber = ds[idx].getAttribute("boxNumber");
 
         if (boxNumber > 0 && boxNumber == $scope.currentBoxNumber + 1) {
-          ds[idx].className = 'activated';
+          ds[idx].className += ' activated';
           $scope.currentBoxNumber += 1;
 
           if (boxNumber >= $scope.currentMaze.max_no) {
@@ -142,7 +211,13 @@ angular.module('maze.controllers', [])
             });
 
             alertPopup.then(function(res) {
+
+              var localMazes = JSON.parse(window.localStorage['mazes']);
+              localMazes[$scope.currentMaze.hash_id] = {'completed': true, 'best_time': ($scope.currentMaze.max_time - $scope.timer.time).toFixed(2)};
+              window.localStorage['mazes'] = JSON.stringify(localMazes);
+
               $scope.mazeNumber += 1;
+              window.localStorage['mazeNumber'] = $scope.mazeNumber;
               $scope.generateMaze();
             });
           }

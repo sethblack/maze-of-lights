@@ -1,7 +1,13 @@
-angular.module('maze', ['ionic', 'maze.controllers'])
+angular.module('maze', ['ionic','ionic.service.core', 'ionic.service.analytics', 'maze.controllers'])
 
-.run(function($ionicPlatform) {
+.run(function($ionicPlatform, $ionicAnalytics) {
   $ionicPlatform.ready(function() {
+    $ionicAnalytics.register();
+
+    if (!('mazes' in window.localStorage)) {
+      window.localStorage['mazes'] = JSON.stringify({});
+    }
+
     if(window.cordova && window.cordova.plugins.Keyboard) {
       // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
       // for form inputs)
